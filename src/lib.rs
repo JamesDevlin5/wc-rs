@@ -1,5 +1,5 @@
 use std::cmp;
-use std::io::BufRead;
+use std::io::{BufRead, BufReader, Read};
 
 #[derive(Debug)]
 pub struct Count {
@@ -23,12 +23,13 @@ impl Count {
 }
 
 impl Count {
-    pub fn process<R: BufRead>(&mut self, mut reader: R) {
+    pub fn process<R: Read>(&mut self, reader: R) {
+        let mut buf = BufReader::new(reader);
         let mut line = String::new();
 
         loop {
             line.clear();
-            let amt_read = reader.read_line(&mut line).expect("Could not read line...");
+            let amt_read = buf.read_line(&mut line).expect("Could not read line...");
             if amt_read > 0 {
                 self.lines += 1;
                 self.bytes += amt_read;
